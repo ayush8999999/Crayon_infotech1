@@ -1,36 +1,9 @@
 <?php
 include 'config.php';
 
-
-// Fetch the user and their experience data
 if (isset($_GET['id'])) {
     $user_id = $_GET['id'];
 
-
-if (empty($name)) {
-        $errors[] = 'Name is required.';
-    }
-
-    // Validate email
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'A valid email address is required.';
-    }
-
-    // Validate mobile
-    if (empty($mobile) || !preg_match('/^\d{10}$/', $mobile)) {
-        $errors[] = 'A valid mobile number (10 digits) is required.';
-    }
-
-    // Validate company experience data
-    foreach ($companies as $company) {
-        if (!isset($company['years']) || !is_numeric($company['years']) || $company['years'] < 0) {
-            $errors[] = 'Years of experience must be a non-negative number.';
-        }
-        if (!isset($company['months']) || !is_numeric($company['months']) || $company['months'] < 0 || $company['months'] > 11) {
-            $errors[] = 'Months of experience must be between 0 and 11.';
-        }
-    }
-    
     try {
         // Fetch user data
         $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
@@ -61,38 +34,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $mobile = $_POST['mobile'];
     $gender = $_POST['gender'];
-    $companies = $_POST['companies'];
+    $companies = isset($_POST['companies']) ? $_POST['companies'] : [];
 
-    try {
-        // Start transaction
-        $pdo->beginTransaction();
+    // Initialize an array to hold errors
+    $errors = [];
 
-        // Update user data
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, mobile = ?, gender = ? WHERE id = ?");
-        $stmt->execute([$name, $email, $mobile, $gender, $user_id]);
+    // Validate user data
+    if (empty($name)) {
+        $errors[] = 'Name is required.';
+    }
 
-        // Delete old experience data
-        $stmt_del_exp = $pdo->prepare("DELETE FROM experiences WHERE user_id = ?");
-        $stmt_del_exp->execute([$user_id]);
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'A valid email address is required.';
+    }
 
-        // Insert new experience data
-        foreach ($companies as $company) {
-            $years_exp = $company['years'];
-            $months_exp = $company['months'];
-            $stmt_exp = $pdo->prepare("INSERT INTO experiences (user_id, years, months) VALUES (?, ?, ?)");
-            $stmt_exp->execute([$user_id, $years_exp, $months_exp]);
+    if (empty($mobile) || !preg_match('/^\d{10}$/', $mobile)) {
+        $errors[] = 'A valid mobile number (10 digits) is required.';
+    }
+
+    // Validate company experience data
+    foreach ($companies as $company) {
+        if (!isset($company['years']) || !is_numeric($company['years']) || $company['years'] < 0) {
+            $errors[] = 'Years of experience must be a non-negative number.';
         }
+        if (!isset($company['months']) || !is_numeric($company['months']) || $company['months'] < 0 || $company['months'] > 11) {
+            $errors[] = 'Months of experience must be between 0 and 11.';
+        }
+    }
 
-        // Commit transaction
-        $pdo->commit();
+    if (empty($errors)) {
+        try {
+            // Start transaction
+            $pdo->beginTransaction();
 
-        echo "User updated successfully!";
-        header("Location: read_user.php"); // Redirect to the user list
-        exit;
-    } catch (PDOException $e) {
-        // Rollback transaction if something failed
-        $pdo->rollBack();
-        echo 'Error: ' . $e->getMessage();
+            // Update user data
+            $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, mobile = ?, gender = ? WHERE id = ?");
+            $stmt->execute([$name, $email, $mobile, $gender, $user_id]);
+
+            // Delete old experience data
+            $stmt_del_exp = $pdo->prepare("DELETE FROM experiences WHERE user_id = ?");
+            $stmt_del_exp->execute([$user_id]);
+
+            // Insert new experience data
+            foreach ($companies as $company) {
+                $years_exp = $company['years'];
+                $months_exp = $company['months'];
+                $stmt_exp = $pdo->prepare("INSERT INTO experiences (user_id, years, months) VALUES (?, ?, ?)");
+                $stmt_exp->execute([$user_id, $years_exp, $months_exp]);
+            }
+
+            // Commit transaction
+            $pdo->commit();
+
+            echo "User updated successfully!";
+            header("Location: read_user.php"); // Redirect to the user list
+            exit;
+        } catch (PDOException $e) {
+            // Rollback transaction if something failed
+            $pdo->rollBack();
+            echo 'Error: ' . $e->getMessage();
+        }
+    } else {
+        // Display errors
+        foreach ($errors as $error) {
+            echo '<p>' . htmlspecialchars($error) . '</p>';
+        }
     }
 }
 ?>
@@ -104,7 +110,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User</title>
     <style>
-        /* Add your styles here */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -149,7 +154,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             background-color: #0056b3;
         }
     </style>
-    
 </head>
 <body>
 
@@ -199,7 +203,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const div = document.createElement('div');
         div.classList.add('experience-entry');
         div.innerHTML = `
-            
             <label>Company #${experienceIndex + 1}:</label><br>
             <label>Years of Experience:</label>
             <input type="number" name="companies[${experienceIndex}][years]" required><br>
@@ -214,11 +217,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function removeExperience(button) {
         const container = document.getElementById('experience-container');
         container.removeChild(button.parentElement);
-        // Optionally update the index if needed
-        // experienceIndex--;
     }
 </script>
-
 
 </body>
 </html>
