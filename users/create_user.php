@@ -4,7 +4,6 @@ include 'navbar.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // Assuming there are no manual errors array as validation is handled in JS
     if (empty($errors)) {
         $name = $_POST['name'];
         $email = $_POST['email'];
@@ -52,92 +51,129 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Create User</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            color: #343a40;
         }
         form {
             background-color: #fff;
             padding: 20px;
             box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-            max-width: 600px;
-            margin: 0 auto;
+            border-radius: 8px;
         }
         label {
             font-weight: bold;
             margin-top: 10px;
             display: block;
+            color: #495057;
         }
         input[type="text"], input[type="email"], input[type="number"], select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 5px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid #dee2e6;
             border-radius: 4px;
         }
         .company-section {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1px solid #dee2e6;
+            padding: 15px;
             margin-bottom: 20px;
             border-radius: 4px;
+            background-color: #f8f9fa;
         }
         .add-company {
             margin-bottom: 10px;
             cursor: pointer;
-            color: blue;
+            color: #007bff;
             text-decoration: underline;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .add-company:hover {
+            color: #0056b3;
         }
         input[type="submit"] {
             background-color: #007bff;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            display: block;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 20px;
         }
         input[type="submit"]:hover {
             background-color: #0056b3;
+        }
+        button[type="button"] {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+        }
+        button[type="button"]:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
 <body>
 
-<center><h2>Create New User</h2></center>
+<div class="container">
+    <h2>Create New User</h2>
 
-<form method="POST" action="" onsubmit="return validateForm(event);">
-    <label for="name">Name:</label>
-    <input type="text" name="name" id="name" required>
+    <form method="POST" action="" onsubmit="return validateForm(event);">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required>
 
-    <label for="email">Email:</label>
-    <input type="email" name="email" id="email" required>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
 
-    <label for="mobile">Mobile:</label>
-    <input type="text" name="mobile" id="mobile" required>
-    
-    <label for="gender">Gender:</label>
-    <select name="gender" id="gender" required>
-        <option value="" disabled selected>Select your gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-    </select>
+        <label for="mobile">Mobile:</label>
+        <input type="text" name="mobile" id="mobile" required>
+        
+        <label for="gender">Gender:</label>
+        <select name="gender" id="gender" required>
+            <option value="" disabled selected>Select your gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
 
-    <h3>Experience Details</h3>
-    <div id="companies">
-        <div class="company-section">
-            <label for="years_exp_0">Years of Experience:</label>
-            <input type="number" name="companies[0][years]" id="years_exp_0" min="0" required>
+        <h3>Experience Details</h3>
+        <div id="companies">
+            <div class="company-section">
+                <label for="years_exp_0">Years of Experience:</label>
+                <input type="number" name="companies[0][years]" id="years_exp_0" min="0" required>
 
-            <label for="months_exp_0">Months of Experience:</label>
-            <input type="number" name="companies[0][months]" id="months_exp_0" min="0" max="11" required>
+                <label for="months_exp_0">Months of Experience:</label>
+                <input type="number" name="companies[0][months]" id="months_exp_0" min="0" max="11" required>
+            </div>
         </div>
-    </div>
-    <div class="add-company" onclick="addCompanySection()"> Add another company</div>
+        <div class="add-company" onclick="addCompanySection()"> Add another company</div>
 
-    <input type="submit" value="Create User">
-</form>
+        <input type="submit" value="Create User">
+    </form>
+</div>
 
 <script>
     let companyIndex = 1;

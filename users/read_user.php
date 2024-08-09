@@ -50,66 +50,84 @@ try {
     <title>User Experience Table</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
             padding: 20px;
+            box-sizing: border-box;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin: 20px auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             background-color: #fff;
-            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
         }
-
         th,
         td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            border: 1px solid #dee2e6;
+            padding: 12px;
             text-align: left;
         }
-
         th {
-            background-color: #495057;
+            background-color: #343a40;
             color: white;
-            font-weight: bold;
             text-transform: uppercase;
+            font-weight: bold;
         }
-
         tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #f1f1f1;
         }
-
-        .edit-button {
-            color: blue;
-            text-decoration: underline;
-            cursor: pointer;
+        .action-buttons {
+            display: flex;
+            gap: 10px;
         }
-
+        .edit-button,
         .delete-button {
-            color: red;
-            text-decoration: underline;
-            cursor: pointer;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
         }
-
+        .edit-button {
+            background-color: #007bff;
+        }
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+        .delete-button {
+            background-color: #dc3545;
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+        }
         .pagination {
+            display: flex;
+            justify-content: center;
             margin-top: 20px;
         }
-
         .pagination a {
-            padding: 8px 12px;
+            padding: 8px 16px;
             border: 1px solid #ddd;
             text-decoration: none;
             color: #007bff;
+            border-radius: 5px;
+            margin: 0 5px;
         }
-
         .pagination a.active {
             background-color: #007bff;
             color: white;
-            border: 1px solid #007bff;
         }
-
         .pagination a:hover {
             background-color: #0056b3;
             color: white;
@@ -118,7 +136,8 @@ try {
 </head>
 <body>
 
-    <h1>User Experience List</h1>
+<div class="container">
+    <center><h1>User Experience List</h1></center>
 
     <table>
         <thead>
@@ -149,8 +168,10 @@ try {
                         <?php endif; ?>
                     </td>
                     <td>
-                        <a href="edit_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="edit-button">Edit</a>
-                        <a href="delete_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="delete-button" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                        <div class="action-buttons">
+                            <a href="edit_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="edit-button">Edit</a>
+                            <a href="delete_user.php?id=<?php echo htmlspecialchars($user['id']); ?>" class="delete-button" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -174,7 +195,9 @@ try {
         <?php endif; ?>
     </div>
 
-    <?php include 'footer.php'; ?>
+</div>
+
+<?php include 'footer.php'; ?>
 
 </body>
 </html>
