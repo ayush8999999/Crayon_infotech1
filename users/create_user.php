@@ -54,10 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
         }
         .container {
-            max-width: 900px;
+            max-width: 2000px;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
@@ -199,6 +199,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const section = button.parentElement;
         section.parentElement.removeChild(section);
     }
+    
+</script>
+
+<script>
+    function validateForm(event) {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+    const companySections = document.querySelectorAll('.company-section');
+
+    let isValid = true;
+    let errorMessages = [];
+
+    // Validate name
+    if (name === '') {
+        errorMessages.push('Name is required.');
+        isValid = false;
+    }
+
+    // Validate email
+    if (email === '' || !/\S+@\S+\.\S+/.test(email)) {
+        errorMessages.push('A valid email address is required.');
+        isValid = false;
+    }
+
+    // Validate mobile
+    if (mobile === '' || !/^\d{10}$/.test(mobile)) {
+        errorMessages.push('A valid mobile number (10 digits) is required.');
+        isValid = false;
+    }
+
+    // Validate experience details
+    companySections.forEach((section, index) => {
+        const years = section.querySelector(`input[name="companies[${index}][years]"]`).value.trim();
+        const months = section.querySelector(`input[name="companies[${index}][months]"]`).value.trim();
+
+        if (years === '' || months === '') {
+            errorMessages.push(`Please fill out all experience details for company ${index + 1}.`);
+            isValid = false;
+        }
+    });
+
+    // Show all error messages in one alert
+    if (errorMessages.length > 0) {
+        alert(errorMessages.join('\n'));
+        event.preventDefault(); // Prevent form submission if validation fails
+    }
+
+    return isValid;
+}
+
 </script>
 
 <?php include 'footer.php'; ?>

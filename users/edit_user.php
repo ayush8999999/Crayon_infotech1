@@ -1,5 +1,6 @@
 <?php
 include 'config.php';
+include 'navbar.php';
 
 if (isset($_GET['id'])) {
     $user_id = $_GET['id'];
@@ -111,89 +112,133 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Edit User</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
             margin: 0;
+            padding: 10px;
+        }
+        .container {
+            max-width: 2000px;
+            margin: 0 auto;
+            background-color: #fff;
             padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            color: #343a40;
         }
         form {
             background-color: #fff;
             padding: 20px;
             box-shadow: 0 2px 3px rgba(0,0,0,0.1);
-            max-width: 600px;
-            margin: 0 auto;
+            border-radius: 8px;
         }
         label {
             font-weight: bold;
             margin-top: 10px;
             display: block;
+            color: #495057;
         }
         input[type="text"], input[type="email"], input[type="number"], select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 5px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid #dee2e6;
             border-radius: 4px;
         }
         .experience-entry {
-            border: 1px solid #ccc;
-            padding: 10px;
+            border: 1px solid #dee2e6;
+            padding: 15px;
             margin-bottom: 20px;
             border-radius: 4px;
+            background-color: #f8f9fa;
         }
-        button {
+        .add-experience {
+            margin-bottom: 10px;
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .add-experience:hover {
+            color: #0056b3;
+        }
+        input[type="submit"] {
             background-color: #007bff;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            display: block;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 20px;
         }
-        button:hover {
+        input[type="submit"]:hover {
             background-color: #0056b3;
+        }
+        button[type="button"] {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+        }
+        button[type="button"]:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
 <body>
 
-<h1>Edit User</h1>
+<div class="container">
+    <h2>Edit User</h2>
 
-<form method="post">
-    <label>Name:</label>
-    <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($user['name']); ?>" required><br><br>
+    <form method="post">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
 
-    <label>Email:</label>
-    <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
 
-    <label>Mobile:</label>
-    <input type="text" name="mobile" id="mobile" value="<?php echo htmlspecialchars($user['mobile']); ?>" required><br><br>
+        <label for="mobile">Mobile:</label>
+        <input type="text" name="mobile" id="mobile" value="<?php echo htmlspecialchars($user['mobile']); ?>" required>
 
-    <label>Gender:</label>
-    <select name="gender" required>
-        <option value="" disabled>Select your gender</option>
-        <option value="male" <?php echo $user['gender'] == 'male' ? 'selected' : ''; ?>>Male</option>
-        <option value="female" <?php echo $user['gender'] == 'female' ? 'selected' : ''; ?>>Female</option>
-        <option value="other" <?php echo $user['gender'] == 'other' ? 'selected' : ''; ?>>Other</option>
-    </select><br><br>
+        <label for="gender">Gender:</label>
+        <select name="gender" id="gender" required>
+            <option value="" disabled>Select your gender</option>
+            <option value="male" <?php echo $user['gender'] == 'male' ? 'selected' : ''; ?>>Male</option>
+            <option value="female" <?php echo $user['gender'] == 'female' ? 'selected' : ''; ?>>Female</option>
+            <option value="other" <?php echo $user['gender'] == 'other' ? 'selected' : ''; ?>>Other</option>
+        </select>
 
-    <h3>Experience:</h3>
-    <div id="experience-container">
-        <?php foreach ($experience as $index => $exp): ?>
-            <div class="experience-entry">
-                <label>Company #<?php echo $index + 1; ?>:</label><br>
-                <label>Years of Experience:</label>
-                <input type="number" name="companies[<?php echo $index; ?>][years]" value="<?php echo htmlspecialchars($exp['years']); ?>" required><br>
-                <label>Months of Experience:</label>
-                <input type="number" name="companies[<?php echo $index; ?>][months]" value="<?php echo htmlspecialchars($exp['months']); ?>" required><br><br>
-            </div>
-        <?php endforeach; ?>
-    </div>
+        <h3>Experience Details</h3>
+        <div id="experience-container">
+            <?php foreach ($experience as $index => $exp): ?>
+                <div class="experience-entry">
+                    <label for="years_exp_<?php echo $index; ?>">Years of Experience:</label>
+                    <input type="number" name="companies[<?php echo $index; ?>][years]" id="years_exp_<?php echo $index; ?>" value="<?php echo htmlspecialchars($exp['years']); ?>" min="0" required>
 
-    <button type="button" onclick="addExperience()">Add More Experience</button><br><br>
+                    <label for="months_exp_<?php echo $index; ?>">Months of Experience:</label>
+                    <input type="number" name="companies[<?php echo $index; ?>][months]" id="months_exp_<?php echo $index; ?>" value="<?php echo htmlspecialchars($exp['months']); ?>" min="0" max="11" required>
+                    
+                    <button type="button" onclick="removeExperience(this)">Remove</button>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <div class="add-experience" onclick="addExperience()"> Add another company</div>
 
-    <input type="submit" value="Update User">
-</form>
+        <input type="submit" value="Update User">
+    </form>
+</div>
 
 <script>
     let experienceIndex = <?php echo count($experience); ?>;
@@ -203,12 +248,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const div = document.createElement('div');
         div.classList.add('experience-entry');
         div.innerHTML = `
-            <label>Company #${experienceIndex + 1}:</label><br>
-            <label>Years of Experience:</label>
-            <input type="number" name="companies[${experienceIndex}][years]" required><br>
-            <label>Months of Experience:</label>
-            <input type="number" name="companies[${experienceIndex}][months]" required><br><br>
-            <button type="button" class="remove-button" onclick="removeExperience(this)">Remove</button>
+            <label for="years_exp_${experienceIndex}">Years of Experience:</label>
+            <input type="number" name="companies[${experienceIndex}][years]" id="years_exp_${experienceIndex}" min="0" required>
+            <label for="months_exp_${experienceIndex}">Months of Experience:</label>
+            <input type="number" name="companies[${experienceIndex}][months]" id="months_exp_${experienceIndex}" min="0" max="11" required>
+            <button type="button" onclick="removeExperience(this)">Remove</button>
         `;
         container.appendChild(div);
         experienceIndex++;
@@ -219,6 +263,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         container.removeChild(button.parentElement);
     }
 </script>
+<?php include 'footer.php'; ?>
 
 </body>
 </html>
